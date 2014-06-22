@@ -1,7 +1,7 @@
 ---
-title       : Test deck
+title       : Distribution of passes dependent on placement of ball
 subtitle    : 
-author      : 
+author      : Don VanDemark
 job         : 
 framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
 highlighter : highlight.js  # {highlight.js, prettify, highlight}
@@ -10,21 +10,49 @@ widgets     : []            # {mathjax, quiz, bootstrap}
 mode        : selfcontained # {standalone, draft}
 ---
 
-## Read-And-Delete
+## Overview
 
-1. Edit YAML front matter
-2. Write using R Markdown
-3. Use an empty line followed by three dashes to separate slides!
+The field in American football is divided into three sections by two hash marks. These hashmarks are 60 feet from the sidelines, with 40 feet separating them in the middle. The ball is placed on the hash when the previous play ends outside of it. This sets up a scenario where you have 38% of the field to one side and 62% to the other. 
 
---- .class #id 
+![Image of college football field](http://2.bp.blogspot.com/-elETWEvQTiw/UEDKCxeYkXI/AAAAAAAAA-k/trmDCElh2lM/s1600/295249_10151182103241071_1977102456_n.jpg)
 
-## Slide 2
+---
+
+## Data
+
+Unfortunately, college football games are not all charted play by play equally. The best data we have is an effort to chart as many games as possible coordinated by [Bill Connelly](https://twitter.com/SBN_BillC) at [Football Study Hall](http://www.footballstudyhall.com/) for SBNation. The [project](http://www.footballstudyhall.com/2014/5/13/5712878/2013-college-football-charting-project) covers 202 games, which is roughly 20% of the total in FBS college football. I focused on two variables:
+* Hash - where the ball is placed to start the play
+* Pass Direction - where the ball was thrown
 
 
 ```r
-plot(1:10, 1:10)
+footballplays <- read.csv('2013StudyHallChartingMasterV2.csv')
+summary(footballplays$Hash);summary(footballplays$Pass.Direction)
 ```
 
-![plot of chunk unnamed-chunk-1](assets/fig/unnamed-chunk-1.png) 
+```
+##          left   Left middle Middle MIddle  right  Right  RIght 
+##   1907    130  10645     84   6848      3    182  10761      4
+```
 
+```
+##                  Left (of hash)          Middle Right (of hash) 
+##           17426            4859            2823            5456
+```
 
+---
+
+## Analysis
+
+I broke out the passing plays between where the plays started and where the passes were directed. The graphs at the [Shiny app](https://caelon.shinyapps.io/ProgAsst/) show the breakdown. It shows what was expected - that if the ball is placed on one of the hashes, the majority of the plays will go to the wide side of the field. However, it was not a significant enough amount for teams to plan against it. An example from the right hash is shown below.
+
+![Example from Shiny app](data:image/png;base64,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)
+
+---
+
+## Future analysis
+
+Further analysis that can be done:
+* filter by team to see if a specific team trends one way or the other
+* take handedness of passer into account to see if that influences the direction
+* add running plays to the analysis
